@@ -1,19 +1,30 @@
 import { Request, Response, NextFunction } from "express";
+import { RequestValidationError } from "../errors/request-validation-error";
+import { DatabaseConnectionError } from "../errors/database-connection-error";
 
 export const errorHandler = (
-  err: Error, // err es algún tipo de objeto err; será el error que tira (thrown) el código que escribamos
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.log("Something went wrong", err);
-/**  
- * respuesta; en el futuro vamos inspeccionar el objeto err Error, 
-   obtener info. a partir de él y ponerla en la respuesta de alguna forma; 
-   por ahora sólo escribimos un mensaje
-*/
-res.status(400).send({
-	message: err.message,
+  
+
+  if (err instanceof RequestValidationError) {
+    // ahora en errors llamamos al serializador y el status code lo sacamos de err en vez de hardcodearlo
+    return res.status(err.statusCode).send({ errors: err.serializeErrors() });
+  }
+
+  if (err instanceof DatabaseConnectionError) {
+      // ahora en errors llamamos al serializador y el status code lo sacamos de err en vez de hardcodearlo
+      return res.status(err.statusCode).send({ errors: err.serializeErrors() });
+  }
+
+  
+  // err. gen[erico
+  res.status(400).send({
+    errors: [{ message: "Something went wrong" }],
   });
+  
 
 };
