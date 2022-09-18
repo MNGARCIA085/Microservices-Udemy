@@ -18,18 +18,21 @@ router.post(
         .withMessage('Password must be between 4 and 20 characters')
   ],
   (req: Request, res: Response) => { // le damos tipo a las respuestas
-	const errors = validationResult(req); // esto puede o no contener errores según los haya o no
 	
+    const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-  	    return res.status(400).send(errors.array()); // si hay errores devuelvo un estado de 400 y un arreglo de errores
-	}
-	
-    const { email, password } = req.body;
-	console.log("Creating a user...");
-    // new User({ email, password })
-	
-    // respuesta
+              // tiramos un error; luego recorreremos la lista “errors” para brindar más 
+            // detalle
+      throw new Error("Invalid email or password");
+    }
+    console.log("Creating a user...");
+      // imaginemos que la base de datos falla todo el tiempo, tiramos una excepción,
+    // haríamos algo como lo siguiente:
+    //throw new Error("Error connecting to database");
+
     res.send({});
+
 	
 
   }
