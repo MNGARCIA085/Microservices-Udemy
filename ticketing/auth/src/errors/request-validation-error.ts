@@ -1,15 +1,13 @@
 import { ValidationError } from "express-validator";
-// validationError es un tipo;  describe el tipo que devuelve cuando hacemos un 
-//intento de validación usando express-validator. En este caso es algo como 
-//[msg:”Bad email”, param:”email”].
-// lo importamos porque en un punto vamos a necesitar la lista de errores de validación
+import { CustomError } from "./custom-error";
 
-export class RequestValidationError extends Error {
+
+export class RequestValidationError extends CustomError {
  
   statusCode = 400;
 
   constructor(public errors: ValidationError[]) { // errors es la lista de errores de val.
-	super();
+	super('Error validating data'); // mensaje para el logging
 	// Only because we are extending a built in class
 	Object.setPrototypeOf(this, RequestValidationError.prototype);
   }
